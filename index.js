@@ -1,5 +1,6 @@
 var FlexiMap = function (object) {
 	var self = this;
+  
 	self.length = 0;
 	var _data = [];
 
@@ -11,11 +12,11 @@ var FlexiMap = function (object) {
 			break;
 		}
 		return empty;
-	}
+	};
 
 	FlexiMap.isIterable = function (object) {
 		return object && (object.constructor.name == 'Object' || object instanceof Array);
-	}
+	};
 
 	self.getLength = function (keyChain) {
 		if (keyChain) {
@@ -23,7 +24,7 @@ var FlexiMap = function (object) {
 		} else {
 			return _data.length;
 		}
-	}
+	};
 
 	if (object) {
 		var i;
@@ -42,22 +43,22 @@ var FlexiMap = function (object) {
 
 	self._isInt = function (input) {
 		return /^[0-9]+$/.test(input);
-	}
+	};
 
 	self._getValue = function (key) {
 		return _data[key];
-	}
+	};
 
 	self._setValue = function (key, value) {
 		_data[key] = value;
-	}
+	};
 
 	self._deleteValue = function (key) {
 		delete _data[key];
 		if (self._isInt(key)) {
 			_data.splice(key, 1);
 		}
-	}
+	};
 
 	self.getRaw = function (keyChain) {
 		if (!(keyChain instanceof Array)) {
@@ -74,7 +75,7 @@ var FlexiMap = function (object) {
 				return undefined;
 			}
 		}
-	}
+	};
 
 	self.get = function (keyChain) {
 		var result = self.getRaw(keyChain);
@@ -82,7 +83,7 @@ var FlexiMap = function (object) {
 			result = result.getAll();
 		}
 		return result;
-	}
+	};
 
 	self.getRange = function (keyChain, fromIndex, toIndex) {
 		var value = self.get(keyChain);
@@ -114,7 +115,7 @@ var FlexiMap = function (object) {
 		}
 
 		return range;
-	}
+	};
 
 	self.count = function (keyChain) {
 		var elements = self.get(keyChain);
@@ -131,15 +132,15 @@ var FlexiMap = function (object) {
 			return 1;
 		}
 		return 0;
-	}
+	};
 
 	self.hasImmediateKey = function (key) {
 		return _data[key] !== undefined;
-	}
+	};
 
 	self.hasKey = function (keyChain) {
 		return (self.get(keyChain) === undefined) ? false : true;
-	}
+	};
 
 	self.hasType = function (keyChain, type) {
 		var objects = self.get(keyChain);
@@ -150,7 +151,7 @@ var FlexiMap = function (object) {
 			}
 		}
 		return false;
-	}
+	};
 
 	self.hasValue = function (keyChain, value) {
 		var values = self.get(keyChain);
@@ -161,7 +162,7 @@ var FlexiMap = function (object) {
 			}
 		}
 		return false;
-	}
+	};
 
 	self.hasObject = function (keyChain, object) {
 		var objects = self.get(keyChain);
@@ -172,7 +173,7 @@ var FlexiMap = function (object) {
 			}
 		}
 		return false;
-	}
+	};
 
 	self.set = function (keyChain, value) {
 		if (!(keyChain instanceof Array)) {
@@ -191,7 +192,7 @@ var FlexiMap = function (object) {
 			self._getValue(key).set(keyChain.slice(1), value);
 		}
 		return value;
-	}
+	};
 
 	self.add = function (keyChain, value) {
 		if (!(keyChain instanceof Array)) {
@@ -208,7 +209,7 @@ var FlexiMap = function (object) {
 			self.set(keyChain.concat(target.getLength()), value);
 		}
 		return value;
-	}
+	};
 
 	self.concat = function (keyChain, value) {
 		if (!(keyChain instanceof Array)) {
@@ -245,7 +246,7 @@ var FlexiMap = function (object) {
 			}
 		}
 		return value;
-	}
+	};
 
 	self._remove = function (key) {
 		if (self.hasImmediateKey(key)) {
@@ -260,7 +261,7 @@ var FlexiMap = function (object) {
 		} else {
 			return undefined;
 		}
-	}
+	};
 
 	self.remove = function (keyChain) {
 		if (!(keyChain instanceof Array)) {
@@ -275,7 +276,7 @@ var FlexiMap = function (object) {
 		} else {
 			return undefined;
 		}
-	}
+	};
 
 	self.removeRange = function (keyChain, fromIndex, toIndex) {
 		var value = self.get(keyChain);
@@ -307,7 +308,7 @@ var FlexiMap = function (object) {
 		}
 
 		return range;
-	}
+	};
 
 	self.pop = function (keyChain) {
 		if (!(keyChain instanceof Array)) {
@@ -325,11 +326,11 @@ var FlexiMap = function (object) {
 		var lastElementChain = keyChain.concat([target.getLength() - 1]);
 
 		return self.remove(lastElementChain);
-	}
+	};
 
 	self.removeAll = function () {
 		_data = [];
-	}
+	};
 
 	self._arrayToObject = function (array) {
 		var i;
@@ -338,7 +339,7 @@ var FlexiMap = function (object) {
 			obj[i] = array[i];
 		}
 		return obj;
-	}
+	};
 
 	self.getAll = function () {
     var isArray = !!(_data.length > 0 || FlexiMap.isEmpty(_data));
@@ -379,7 +380,7 @@ var FlexiMap = function (object) {
 		}
 
 		return self._arrayToObject(data);
-	}
-}
+	};
+};
 
 module.exports.FlexiMap = FlexiMap;
