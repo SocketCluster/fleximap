@@ -341,7 +341,7 @@ var FlexiMap = function (object) {
 	}
 
 	self.getAll = function () {
-		var isArray = (_data.length > 0) ? true : false;
+    var isArray = !!(_data.length > 0 || FlexiMap.isEmpty(_data));
 		var i;
 
 		var data = [];
