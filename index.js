@@ -2,6 +2,7 @@ var FlexiMap = function (object) {
 	var self = this;
   
 	self.length = 0;
+	var defaultAsArray = object instanceof Array;
 	var _data = [];
 
 	FlexiMap.isEmpty = function (object) {
@@ -342,7 +343,7 @@ var FlexiMap = function (object) {
 	};
 
 	self.getAll = function () {
-    var isArray = !!(_data.length > 0 || FlexiMap.isEmpty(_data));
+		var isArray = defaultAsArray;
 		var i;
 
 		var data = [];
