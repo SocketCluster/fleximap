@@ -274,18 +274,31 @@ var FlexiMap = function (object) {
   };
   
   self._splice = function () {
-    return Array.prototype.splice.apply(_data, arguments);
+    var args = [];
+    for (var i in arguments) {
+      args.push(arguments[i]);
+    }
+    if (args[2]) {
+      var items = args.splice(2);
+      for (var j in items) {
+        if (FlexiMap.isIterable(items[j])) {
+          items[j] = new FlexiMap(items[j]);
+        }
+      }
+      args = args.concat(items);
+    }
+    return Array.prototype.splice.apply(_data, args);
   };
   
   /*
-    splice(keyChain, howMany, item1, ..., itemX)
+    splice(keyChain, index, count, item1, ..., itemX)
   */
   self.splice = function () {
     var keyChain = arguments[0];
     
-    var spliceArgs = Array.prototype.slice.call(arguments, 1);
     var parentMap = self.getRaw(keyChain);
     if (parentMap instanceof FlexiMap) {
+      var spliceArgs = Array.prototype.slice.call(arguments, 1);
       var rawRemovedItems = parentMap._splice.apply(parentMap, spliceArgs);
       
       var plainRemovedItems = [];
