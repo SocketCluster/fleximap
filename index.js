@@ -56,9 +56,6 @@ var FlexiMap = function (object) {
 
   self._deleteValue = function (key) {
     delete _data[key];
-    if (self._isInt(key)) {
-      _data.splice(key, 1);
-    }
   };
 
   self.getRaw = function (keyChain) {
@@ -256,12 +253,10 @@ var FlexiMap = function (object) {
 
       if (data instanceof FlexiMap) {
         return data.getAll();
-      } else {
-        return data;
       }
-    } else {
-      return undefined;
+      return data;
     }
+    return undefined;
   };
 
   self.remove = function (keyChain) {
@@ -274,9 +269,38 @@ var FlexiMap = function (object) {
     var parentMap = self.getRaw(keyChain.slice(0, -1));
     if (parentMap instanceof FlexiMap) {
       return parentMap._remove(keyChain[keyChain.length - 1]);
-    } else {
-      return undefined;
     }
+    return undefined;
+  };
+  
+  self._splice = function () {
+    return Array.prototype.splice.apply(_data, arguments);
+  };
+  
+  /*
+    splice(keyChain, howMany, item1, ..., itemX)
+  */
+  self.splice = function () {
+    var keyChain = arguments[0];
+    
+    var spliceArgs = Array.prototype.slice.call(arguments, 1);
+    var parentMap = self.getRaw(keyChain);
+    if (parentMap instanceof FlexiMap) {
+      var rawRemovedItems = parentMap._splice.apply(parentMap, spliceArgs);
+      
+      var plainRemovedItems = [];
+      var curItem;
+      for (var j in rawRemovedItems) {
+        curItem = rawRemovedItems[j];
+        if (curItem instanceof FlexiMap) {
+          plainRemovedItems.push(curItem.getAll());
+        } else {
+          plainRemovedItems.push(curItem);
+        }
+      }
+      return plainRemovedItems;
+    }
+    return [];
   };
 
   self.removeRange = function (keyChain, fromIndex, toIndex) {
