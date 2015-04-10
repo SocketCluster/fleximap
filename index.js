@@ -349,21 +349,7 @@ var FlexiMap = function (object) {
   };
 
   self.pop = function (keyChain) {
-    if (!(keyChain instanceof Array)) {
-      keyChain = [keyChain];
-    }
-    
-    var target = self.get(keyChain);
-    if (!target) {
-      return target;
-    }
-    if (!(target instanceof FlexiMap) || target.getLength() < 1) {
-      return self.remove(keyChain);
-    }
-
-    var lastElementChain = keyChain.concat([target.getLength() - 1]);
-
-    return self.remove(lastElementChain);
+    return self.splice(keyChain, -1, 1);
   };
 
   self.removeAll = function () {
