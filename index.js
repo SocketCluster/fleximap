@@ -196,17 +196,21 @@ var FlexiMap = function (object) {
     if (!(keyChain instanceof Array)) {
       keyChain = [keyChain];
     }
+    var insertionIndex;
     var target = self.getRaw(keyChain);
     if (target == null) {
+      insertionIndex = 0;
       target = new FlexiMap([value]);
       self.set(keyChain, target);
     } else if (!(target instanceof FlexiMap)) {
       target = new FlexiMap([target, value]);
+      insertionIndex = target.getLength() - 1;
       self.set(keyChain, target);
     } else {
-      self.set(keyChain.concat(target.getLength()), value);
+      insertionIndex = target.getLength();
+      self.set(keyChain.concat(insertionIndex), value);
     }
-    return value;
+    return insertionIndex;
   };
 
   self.concat = function (keyChain, value) {
