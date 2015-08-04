@@ -6,11 +6,12 @@ var FlexiMap = function (object) {
   var _data = [];
 
   FlexiMap.isEmpty = function (object) {
-    var i;
     var empty = true;
-    for (i in object) {
-      empty = false;
-      break;
+    for (var i in object) {
+      if (object.hasOwnProperty(i)) {
+        empty = false;
+        break;
+      }
     }
     return empty;
   };
@@ -28,13 +29,14 @@ var FlexiMap = function (object) {
   };
 
   if (object) {
-    var i;
     if (FlexiMap.isIterable(object)) {
-      for (i in object) {
-        if (FlexiMap.isIterable(object[i])) {
-          _data[i] = new FlexiMap(object[i]);
-        } else {
-          _data[i] = object[i];
+      for (var i in object) {
+        if (object.hasOwnProperty(i)) {
+          if (FlexiMap.isIterable(object[i])) {
+            _data[i] = new FlexiMap(object[i]);
+          } else {
+            _data[i] = object[i];
+          }
         }
       }
     } else {
@@ -86,28 +88,29 @@ var FlexiMap = function (object) {
   self.getRange = function (keyChain, fromIndex, toIndex) {
     var value = self.get(keyChain);
     var range;
-    var i;
 
     if (value instanceof Array) {
       range = [];
       if (toIndex == null || toIndex > value.length) {
         toIndex = value.length;
       }
-      for (i = fromIndex; i < toIndex; i++) {
+      for (var i = fromIndex; i < toIndex; i++) {
         range.push(value[i]);
       }
     } else {
       range = {};
       var recording = false;
-      for (i in value) {
-        if (i == fromIndex) {
-          recording = true;
-        }
-        if (recording && i == toIndex) {
-          break;
-        }
-        if (recording) {
-          range[i] = value[i];
+      for (var j in value) {
+        if (value.hasOwnProperty(j)) {
+          if (j == fromIndex) {
+            recording = true;
+          }
+          if (recording && j == toIndex) {
+            break;
+          }
+          if (recording) {
+            range[j] = value[j];
+          }
         }
       }
     }
@@ -121,9 +124,10 @@ var FlexiMap = function (object) {
     if (elements) {
       if (FlexiMap.isIterable(elements)) {
         var result = 0;
-        var i;
-        for (i in elements) {
-          result++;
+        for (var i in elements) {
+          if (elements.hasOwnProperty(i)) {
+            result++;
+          }
         }
         return result;
       }
@@ -142,10 +146,12 @@ var FlexiMap = function (object) {
 
   self.hasType = function (keyChain, type) {
     var objects = self.get(keyChain);
-    var i;
-    for (i in objects) {
-      if (objects[i] instanceof type) {
-        return true;
+
+    for (var i in objects) {
+      if (objects.hasOwnProperty(i)) {
+        if (objects[i] instanceof type) {
+          return true;
+        }
       }
     }
     return false;
@@ -153,10 +159,12 @@ var FlexiMap = function (object) {
 
   self.hasValue = function (keyChain, value) {
     var values = self.get(keyChain);
-    var i;
-    for (i in values) {
-      if (values[i] == value) {
-        return true;
+
+    for (var i in values) {
+      if (values.hasOwnProperty(i)) {
+        if (values[i] == value) {
+          return true;
+        }
       }
     }
     return false;
@@ -164,10 +172,12 @@ var FlexiMap = function (object) {
 
   self.hasObject = function (keyChain, object) {
     var objects = self.get(keyChain);
-    var i;
-    for (i in objects) {
-      if (objects[i] === object) {
-        return true;
+
+    for (var i in objects) {
+      if (objects.hasOwnProperty(i)) {
+        if (objects[i] === object) {
+          return true;
+        }
       }
     }
     return false;
@@ -231,19 +241,22 @@ var FlexiMap = function (object) {
       target = new FlexiMap([target].concat(value));
       self.set(keyChain, target);
     } else {
-      var i;
       var keyChainLastIndex = keyChain.length;
       if (value instanceof Array) {
         var len = target.getLength();
         keyChain = keyChain.concat(len);
-        for (i in value) {
-          self.set(keyChain, value[i]);
-          keyChain[keyChainLastIndex] += 1;
+        for (var i in value) {
+          if (value.hasOwnProperty(i)) {
+            self.set(keyChain, value[i]);
+            keyChain[keyChainLastIndex] += 1;
+          }
         }
       } else {
-        for (i in value) {
-          keyChain[keyChainLastIndex] = i;
-          self.set(keyChain, value[i]);
+        for (var j in value) {
+          if (value.hasOwnProperty(j)) {
+            keyChain[keyChainLastIndex] = j;
+            self.set(keyChain, value[j]);
+          }
         }
       }
     }
@@ -280,11 +293,14 @@ var FlexiMap = function (object) {
   self._splice = function () {
     var args = [];
     for (var i in arguments) {
-      args.push(arguments[i]);
+      if (arguments.hasOwnProperty(i)) {
+        args.push(arguments[i]);
+      }
     }
     if (args[2]) {
       var items = args.splice(2);
-      for (var j in items) {
+      var len = items.length;
+      for (var j = 0; j < len; j++) {
         if (FlexiMap.isIterable(items[j])) {
           items[j] = new FlexiMap(items[j]);
         }
@@ -307,7 +323,8 @@ var FlexiMap = function (object) {
       
       var plainRemovedItems = [];
       var curItem;
-      for (var j in rawRemovedItems) {
+      var len = rawRemovedItems.length;
+      for (var j = 0; j < len; j++) {
         curItem = rawRemovedItems[j];
         if (curItem instanceof FlexiMap) {
           plainRemovedItems.push(curItem.getAll());
@@ -323,7 +340,6 @@ var FlexiMap = function (object) {
   self.removeRange = function (keyChain, fromIndex, toIndex) {
     var value = self.get(keyChain);
     var range;
-    var i;
 
     if (value instanceof Array) {
       if (toIndex == null || toIndex > value.length) {
@@ -334,16 +350,18 @@ var FlexiMap = function (object) {
     } else {
       range = {};
       var deleting = false;
-      for (i in value) {
-        if (i == fromIndex) {
-          deleting = true;
-        }
-        if (deleting && i == toIndex) {
-          break;
-        }
-        if (deleting) {
-          range[i] = value[i];
-          delete value[i];
+      for (var i in value) {
+        if (value.hasOwnProperty(i)) {
+          if (i == fromIndex) {
+            deleting = true;
+          }
+          if (deleting && i == toIndex) {
+            break;
+          }
+          if (deleting) {
+            range[i] = value[i];
+            delete value[i];
+          }
         }
       }
       self.set(keyChain, value);
@@ -361,33 +379,35 @@ var FlexiMap = function (object) {
   };
 
   self._arrayToObject = function (array) {
-    var i;
     var obj = {};
-    for (i in array) {
-      obj[i] = array[i];
+    for (var i in array) {
+      if (array.hasOwnProperty(i)) {
+        obj[i] = array[i];
+      }
     }
     return obj;
   };
 
   self.getAll = function () {
     var isArray = defaultAsArray;
-    var i;
 
     var data = [];
 
-    for (i in _data) {
-      if (_data[i] instanceof FlexiMap) {
-        data[i] = _data[i].getAll();
-      } else {
-        data[i] = _data[i];
+    for (var i in _data) {
+      if (_data.hasOwnProperty(i)) {
+        if (_data[i] instanceof FlexiMap) {
+          data[i] = _data[i].getAll();
+        } else {
+          data[i] = _data[i];
+        }
       }
     }
 
     if (isArray) {
       var len = data.length;
 
-      for (i = 0; i < len; i++) {
-        if (data[i] === undefined) {
+      for (var j = 0; j < len; j++) {
+        if (data[j] === undefined) {
           isArray = false;
           break;
         }
@@ -395,10 +415,12 @@ var FlexiMap = function (object) {
     }
 
     if (isArray) {
-      for (i in data) {
-        if (!self._isInt(i)) {
-          isArray = false;
-          break;
+      for (var k in data) {
+        if (data.hasOwnProperty(k)) {
+          if (!self._isInt(k)) {
+            isArray = false;
+            break;
+          }
         }
       }
     }
