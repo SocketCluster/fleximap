@@ -1,6 +1,6 @@
 var FlexiMap = function (object) {
   var self = this;
-  
+
   self.length = 0;
   var defaultAsArray = object instanceof Array;
   var _data = [];
@@ -184,6 +184,7 @@ var FlexiMap = function (object) {
   };
 
   self.set = function (keyChain, value) {
+    var originalValue = value;
     if (!(keyChain instanceof Array)) {
       keyChain = [keyChain];
     }
@@ -199,7 +200,7 @@ var FlexiMap = function (object) {
       }
       self._getValue(key).set(keyChain.slice(1), value);
     }
-    return value;
+    return originalValue;
   };
 
   self.add = function (keyChain, value) {
@@ -227,7 +228,7 @@ var FlexiMap = function (object) {
     if (!(keyChain instanceof Array)) {
       keyChain = [keyChain];
     }
-    
+
     var target = self.getRaw(keyChain);
 
     if (!FlexiMap.isIterable(value)) {
@@ -289,7 +290,7 @@ var FlexiMap = function (object) {
     }
     return undefined;
   };
-  
+
   self._splice = function () {
     var args = [];
     for (var i in arguments) {
@@ -309,18 +310,18 @@ var FlexiMap = function (object) {
     }
     return Array.prototype.splice.apply(_data, args);
   };
-  
+
   /*
     splice(keyChain, index, count, item1, ..., itemX)
   */
   self.splice = function () {
     var keyChain = arguments[0];
-    
+
     var parentMap = self.getRaw(keyChain);
     if (parentMap instanceof FlexiMap) {
       var spliceArgs = Array.prototype.slice.call(arguments, 1);
       var rawRemovedItems = parentMap._splice.apply(parentMap, spliceArgs);
-      
+
       var plainRemovedItems = [];
       var curItem;
       var len = rawRemovedItems.length;
