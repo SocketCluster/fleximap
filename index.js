@@ -17,7 +17,7 @@ var FlexiMap = function (object) {
   };
 
   FlexiMap.isIterable = function (object) {
-    return object && (object.constructor.name == 'Object' || object instanceof Array);
+    return object && (object.constructor.name === 'Object' || object instanceof Array);
   };
 
   self.getLength = function (keyChain) {
@@ -162,7 +162,7 @@ var FlexiMap = function (object) {
 
     for (var i in values) {
       if (values.hasOwnProperty(i)) {
-        if (values[i] == value) {
+        if (values[i] === value) {
           return true;
         }
       }
